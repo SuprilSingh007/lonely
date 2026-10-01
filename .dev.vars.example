@@ -1,0 +1,11 @@
+# Local secrets for `npm run dev`. `npm run setup` copies this to .dev.vars with a fresh secret.
+# In production set these with `npx wrangler secret put <NAME>`.
+BETTER_AUTH_SECRET=replace-me-with-32-plus-random-chars
+
+# Optional: public URL of the app (e.g. https://ghulo-milo.<you>.workers.dev). Inferred from the request when empty.
+# BETTER_AUTH_URL=
+
+# Only needed when SMS_PROVIDER=twilio
+# TWILIO_ACCOUNT_SID=
+# TWILIO_AUTH_TOKEN=
+# TWILIO_FROM_NUMBER=

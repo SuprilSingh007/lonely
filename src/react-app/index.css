@@ -2,12 +2,25 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
+@import "@fontsource-variable/bricolage-grotesque";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-    --font-heading: var(--font-sans);
+    --font-heading: 'Bricolage Grotesque Variable', var(--font-sans);
+    --font-display: 'Bricolage Grotesque Variable', 'Geist Variable', sans-serif;
     --font-sans: 'Geist Variable', sans-serif;
+    --color-ink: var(--ink);
+    --color-paper: var(--paper);
+    --color-coral: var(--coral);
+    --color-grape: var(--grape);
+    --color-mint: var(--mint);
+    --color-lilac: var(--lilac);
+    --color-peach: var(--peach);
+    --color-sky: var(--sky);
+    --shadow-pop: 4px 4px 0 0 var(--ink);
+    --shadow-pop-sm: 2px 2px 0 0 var(--ink);
+    --shadow-pop-lg: 6px 6px 0 0 var(--ink);
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -49,38 +62,48 @@
 }
 
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
+    /* Ghulo Milo palette — see design.md */
+    --paper: #fff6ec;
+    --ink: #24123a;
+    --coral: #ff5b45;
+    --grape: #6c4cf5;
+    --mint: #2fd6a4;
+    --lilac: #e9e1ff;
+    --peach: #ffe3d6;
+    --sky: #c6e8ff;
+
+    --background: var(--paper);
+    --foreground: var(--ink);
+    --card: #fffdf9;
+    --card-foreground: var(--ink);
+    --popover: #fffdf9;
+    --popover-foreground: var(--ink);
+    --primary: var(--coral);
+    --primary-foreground: #ffffff;
+    --secondary: var(--grape);
+    --secondary-foreground: #ffffff;
+    --muted: var(--peach);
+    --muted-foreground: #6b5a7e;
+    --accent: var(--lilac);
+    --accent-foreground: var(--ink);
+    --destructive: #e5383b;
+    --border: var(--ink);
+    --input: var(--ink);
+    --ring: var(--grape);
+    --chart-1: var(--coral);
+    --chart-2: var(--grape);
+    --chart-3: var(--mint);
+    --chart-4: #7cc6fe;
+    --chart-5: #ffb38a;
+    --radius: 1rem;
+    --sidebar: var(--paper);
+    --sidebar-foreground: var(--ink);
+    --sidebar-primary: var(--coral);
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: var(--lilac);
+    --sidebar-accent-foreground: var(--ink);
+    --sidebar-border: var(--ink);
+    --sidebar-ring: var(--grape);
 }
 
 .dark {
@@ -120,11 +143,58 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    }
-  body {
-    @apply bg-background text-foreground;
-    }
+  }
   html {
     @apply font-sans;
-    }
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    overscroll-behavior-y: none;
+  }
+  h1, h2, h3, .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+}
+
+@utility pop {
+  border: 2px solid var(--ink);
+  box-shadow: var(--shadow-pop);
+}
+
+@utility pop-sm {
+  border: 2px solid var(--ink);
+  box-shadow: var(--shadow-pop-sm);
+}
+
+/* Squish on press: element moves into its own shadow. */
+@utility pressable {
+  transition: transform 120ms ease, box-shadow 120ms ease;
+  &:active:not(:disabled) {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 0 var(--ink);
+  }
+}
+
+@utility pb-safe {
+  padding-bottom: max(env(safe-area-inset-bottom), 0px);
+}
+
+/* Faint dotted "notebook" texture behind everything. */
+@utility bg-dots {
+  background-image: radial-gradient(color-mix(in oklab, var(--ink) 9%, transparent) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+@keyframes typing-bounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.5; }
+  40% { transform: translateY(-4px); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
