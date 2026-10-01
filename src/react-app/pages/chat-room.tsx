@@ -71,7 +71,16 @@ export function ChatRoomPage() {
 
 	const { status, sendTyping } = useChatSocket(detail.data ? id : undefined, (event: SocketEvent) => {
 		if (event.type === "message") {
-			queryClient.setQueryData<ChatDetail>(key, (prev) => (prev ? mergeMessage(prev, event.message) : prev));
+			queryClient.setQueryData<ChatDetail>(key, (prev) => {
+				if (!prev) return prev;
+				const next = mergeMessage(prev, event.message);
+				// Replying means they've read everything before it.
+				if (event.message.senderId !== prev.me.id) {
+					const read = Math.max(prev.chat.otherLastReadAt ?? 0, event.message.createdAt);
+					return { ...next, chat: { ...next.chat, otherLastReadAt: read } };
+				}
+				return next;
+			});
 			if (event.message.senderId !== myId) {
 				setTypingAt(0);
 				if (document.visibilityState === "visible") markRead.mutate();
@@ -92,6 +101,15 @@ export function ChatRoomPage() {
 			}
 		}
 	});
+
+	// After a reconnect, refetch so anything sent while we were offline shows up.
+	const wasOpen = useRef(false);
+	useEffect(() => {
+		if (status !== "open") return;
+		if (wasOpen.current) void queryClient.invalidateQueries({ queryKey: key });
+		wasOpen.current = true;
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [status]);
 
 	// Re-render once a second while someone is typing so the indicator expires.
 	useEffect(() => {

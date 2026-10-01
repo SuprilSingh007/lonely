@@ -16,6 +16,10 @@ Everything runs on Cloudflare:
 
 The design language is in [`design.md`](./design.md).
 
+| Phone: deck | Phone: chat | Desktop: chat | Tablet: admin |
+| --- | --- | --- | --- |
+| ![Deck](docs/screenshots/mobile-deck.png) | ![Chat](docs/screenshots/mobile-chat.png) | ![Desktop chat](docs/screenshots/desktop-chat.png) | ![Admin](docs/screenshots/tablet-admin.png) |
+
 ## Run it locally (no Cloudflare account needed)
 
 Requires Node.js 22+.

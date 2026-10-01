@@ -165,7 +165,7 @@ try {
 	assert(true, "A sees B typing in realtime");
 	await b.getByLabel("Message").pressSequentially("1.5x gang! Which episode should I start with?", { delay: 5 });
 	await b.keyboard.press("Enter");
-	await a.getByText("Which episode should I start with?").waitFor({ timeout: 5000 });
+	await a.getByTestId("msg-theirs").filter({ hasText: "Which episode should I start with?" }).waitFor({ timeout: 5000 });
 	assert(true, "A received B's reply over the WebSocket without reloading");
 	await a.getByTestId("seen").waitFor({ timeout: 5000 });
 	assert(true, "A sees the 'Seen' receipt");
