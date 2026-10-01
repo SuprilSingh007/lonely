@@ -1,90 +1,49 @@
-# React + Vite + Hono + Cloudflare Workers
+# Lonely
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/cloudflare/templates/tree/main/vite-react-template)
+Full-stack app on Cloudflare Workers.
 
-This template provides a minimal setup for building a React application with TypeScript and Vite, designed to run on Cloudflare Workers. It features hot module replacement, ESLint integration, and the flexibility of Workers deployments.
+- **Frontend:** React 19 + Vite, [shadcn/ui](https://ui.shadcn.com) (Radix base, Nova preset) on Tailwind CSS v4 — `src/react-app/`
+- **Backend:** [Hono](https://hono.dev) running in a Worker — `src/worker/`
+- **Local runtime:** [`@cloudflare/vite-plugin`](https://developers.cloudflare.com/workers/vite-plugin/) runs the Worker in `workerd` (the real Workers runtime) during `vite dev` / `vite preview`, with local emulation of bindings (Durable Objects, KV, D1, R2, …). No Cloudflare account is needed to develop.
 
-![React + TypeScript + Vite + Cloudflare Workers](https://imagedelivery.net/wSMYJvS3Xw-n339CbDyDIA/fc7b4b62-442b-4769-641b-ad4422d74300/public)
+## Requirements
 
-<!-- dash-content-start -->
+- Node.js 22+ and npm
 
-🚀 Supercharge your web development with this powerful stack:
-
-- [**React**](https://react.dev/) - A modern UI library for building interactive interfaces
-- [**Vite**](https://vite.dev/) - Lightning-fast build tooling and development server
-- [**Hono**](https://hono.dev/) - Ultralight, modern backend framework
-- [**Cloudflare Workers**](https://developers.cloudflare.com/workers/) - Edge computing platform for global deployment
-
-### ✨ Key Features
-
-- 🔥 Hot Module Replacement (HMR) for rapid development
-- 📦 TypeScript support out of the box
-- 🛠️ ESLint configuration included
-- ⚡ Zero-config deployment to Cloudflare's global network
-- 🎯 API routes with Hono's elegant routing
-- 🔄 Full-stack development setup
-- 🔎 Built-in Observability to monitor your Worker
-
-Get started in minutes with local development or deploy directly via the Cloudflare dashboard. Perfect for building modern, performant web applications at the edge.
-
-<!-- dash-content-end -->
-
-## Getting Started
-
-To start a new project with this template, run:
-
-```bash
-npm create cloudflare@latest -- --template=cloudflare/templates/vite-react-template
-```
-
-A live deployment of this template is available at:
-[https://react-vite-template.templates.workers.dev](https://react-vite-template.templates.workers.dev)
-
-## Development
-
-Install dependencies:
+## Getting started
 
 ```bash
 npm install
+npm run dev        # http://localhost:5173 — React with HMR + Hono API at /api/*
 ```
 
-Start the development server with:
+## Scripts
 
-```bash
-npm run dev
+| Script | What it does |
+| --- | --- |
+| `npm run dev` | Vite dev server with the Worker running in local `workerd` |
+| `npm run build` | Typecheck (`tsc -b`) and build client + Worker into `dist/` |
+| `npm run preview` | Build, then serve the production build locally in `workerd` |
+| `npm run lint` | ESLint |
+| `npm run cf-typegen` | Regenerate `worker-configuration.d.ts` after changing `wrangler.json` |
+| `npm run deploy` | `wrangler deploy` (requires `wrangler login`) |
+
+## Project layout
+
+```
+src/
+  react-app/            # SPA (served as static assets)
+    components/ui/      # shadcn/ui components — add more with `npx shadcn@latest add <name>`
+    lib/utils.ts        # cn() helper
+    index.css           # Tailwind + shadcn theme tokens
+  worker/index.ts       # Hono app (handles /api/*)
+wrangler.json           # Worker config, bindings, compatibility date
+components.json         # shadcn/ui config (`@/` → src/react-app)
 ```
 
-Your application will be available at [http://localhost:5173](http://localhost:5173).
+Routing: requests that match a built asset are served directly; other browser navigations fall back to `index.html` (`not_found_handling: "single-page-application"`); everything else (e.g. `/api/*`) reaches the Hono Worker.
 
-## Production
+## How this project was generated
 
-Build your project for production:
-
-```bash
-npm run build
-```
-
-Preview your build locally:
-
-```bash
-npm run preview
-```
-
-Deploy your project to Cloudflare Workers:
-
-```bash
-npm run build && npm run deploy
-```
-
-Monitor your workers:
-
-```bash
-npx wrangler tail
-```
-
-## Additional Resources
-
-- [Cloudflare Workers Documentation](https://developers.cloudflare.com/workers/)
-- [Vite Documentation](https://vitejs.dev/guide/)
-- [React Documentation](https://reactjs.org/)
-- [Hono Documentation](https://hono.dev/)
+1. `npm create cloudflare@latest -- lonely --template=cloudflare/templates/vite-react-template` ([Cloudflare Hono guide](https://developers.cloudflare.com/workers/framework-guides/web-apps/more-web-frameworks/hono/))
+2. shadcn/ui per the [Vite "existing project" guide](https://ui.shadcn.com/docs/installation/vite): `tailwindcss` + `@tailwindcss/vite`, `@/*` path alias pointed at `src/react-app`, then `npx shadcn@latest init -b radix -p nova` and `npx shadcn@latest add button card`
