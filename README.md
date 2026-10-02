@@ -26,9 +26,13 @@ Requires Node.js 22+.
 
 ```bash
 npm install
-npm run setup   # creates .dev.vars with a random auth secret, applies D1 migrations locally, seeds 48 demo people
-npm run dev     # http://localhost:5173
+npm run setup
+npm run dev
 ```
+
+`npm run setup` creates `.dev.vars` with a random auth secret, applies the D1 migrations locally and seeds 48 demo people. `npm run dev` serves the app at http://localhost:5173.
+
+> On macOS (zsh), don't paste commands with trailing `# comments`: zsh passes `#` through as an argument, and `npm run dev # …` makes Vite use a folder called `#` as the project root, which gives a blank page with no API.
 
 - **Signing in locally:** `SMS_PROVIDER` is `console`, so no SMS is sent. The login screen shows the code in a "🧪 Dev mode" box, and it's also printed in the terminal. Any Indian mobile number works (e.g. `98765 43210`).
 - **Admin panel:** sign in with **`99999 99999`** (the `ADMIN_PHONE_NUMBERS` var in `wrangler.json`) and open **Admin** in the nav.
@@ -57,10 +61,12 @@ npm run dev     # http://localhost:5173
 
 ```bash
 npx wrangler login
-npx wrangler d1 create ghulo-milo        # copy the database_id it prints into wrangler.json
-npx wrangler secret put BETTER_AUTH_SECRET   # any long random string, e.g. `openssl rand -hex 32`
-npm run deploy                            # builds, migrates remote D1 (incl. the Pune taxonomy), deploys
+npx wrangler d1 create ghulo-milo
+npx wrangler secret put BETTER_AUTH_SECRET
+npm run deploy
 ```
+
+Copy the `database_id` that `d1 create` prints into `wrangler.json`. For the secret, paste any long random string (e.g. the output of `openssl rand -hex 32`). `npm run deploy` builds, applies the remote D1 migrations (including the Pune taxonomy) and deploys.
 
 Then, before real users:
 
@@ -99,11 +105,13 @@ Demo users are **never** deployed. They only go into the local database.
 - the phone user suggests an interest and blocks the other user
 - an admin on a tablet approves the suggestion and reviews the block
 
+One-time install:
+
 ```bash
-npm i -D playwright && npx playwright install chromium   # one-time
-npm run dev               # terminal 1
-npm run test:e2e          # terminal 2. Screenshots in .e2e-artifacts/
+npm i -D playwright && npx playwright install chromium
 ```
+
+Then run `npm run dev` in one terminal and `npm run test:e2e` in another. Screenshots land in `.e2e-artifacts/`.
 
 ## Project layout
 
